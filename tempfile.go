@@ -10,16 +10,18 @@ import (
 )
 
 var (
-	once sync.Once
-	mu   sync.Mutex
-	r    *rand.Rand
-	b    []byte
+	mu sync.Mutex
+	r  *rand.Rand
 )
 
 const (
 	maxAttempts = 1000
 	reseedAfter = 10
 )
+
+func init() {
+	reseed()
+}
 
 // New creates a new temporary file in the specified directory the same way
 // ioutils.TempFile does. If dir is an empty string, it'll be created in the
@@ -49,7 +51,7 @@ func NewSuffixAndMode(dir, prefix, suffix string, perm os.FileMode) (f *os.File,
 
 	var conflicts int
 	for i := 0; i < maxAttempts; i++ {
-		name := filepath.Join(dir, prefix+nextSuffix()+suffix)
+		name := filepath.Join(dir, prefix+nextRand()+suffix)
 		f, err = os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, perm)
 		if os.IsExist(err) {
 			if conflicts++; conflicts > reseedAfter {
@@ -62,15 +64,10 @@ func NewSuffixAndMode(dir, prefix, suffix string, perm os.FileMode) (f *os.File,
 	return nil, fmt.Errorf("unable to create tempfile after %d attempts", maxAttempts)
 }
 
-func nextSuffix() string {
-	once.Do(func() {
-		b = make([]byte, 8)
-		reseed()
-	})
+func nextRand() string {
 	mu.Lock()
 	defer mu.Unlock()
-	r.Read(b)
-	return fmt.Sprintf(".%x", b)
+	return fmt.Sprintf(".%d", r.Uint32())
 }
 
 func reseed() {

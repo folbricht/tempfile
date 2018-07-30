@@ -13,8 +13,8 @@ f, err := tempfile.New("/var/tmp", "myfile")
 if err != nil {
   panic(err)
 }
-defer f.Close()
 defer os.Remove(f.Name())
+defer f.Close()
 
 // Make a temporaty file with the given prefix and suffix
 f, err = tempfile.NewSuffix("", "myfile", ".tmp")
