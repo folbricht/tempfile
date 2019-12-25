@@ -1,8 +1,8 @@
-tempfile
-========
+# tempfile
+
+[![GoDoc](https://godoc.org/github.com/folbricht/tempfile?status.svg)](https://godoc.org/github.com/folbricht/tempfile)
 
 An alternative implementation of ioutil.TempFile that provides a little more control over the temporary files being created. It allows the caller to provide a file suffix and/or file mode to set the permissions to something other than the default 0600.
-
 
 ## Examples
 
@@ -31,5 +31,5 @@ f, err = tempfile.NewSuffixAndMode("", "myfile", ".ext", 0644)
 ```
 
 ## Links
-- ioutil package - https://golang.org/pkg/io/ioutil/
-- GoDoc for tempfile - https://godoc.org/github.com/folbricht/tempfile
+
+- ioutil package - [https://golang.org/pkg/io/ioutil/](https://golang.org/pkg/io/ioutil/)
